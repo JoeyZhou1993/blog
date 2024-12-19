@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的个人网站</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="mac-window header-blur">
+        <nav>
+            <div class="logo">
+                <img src="images/logo.svg" alt="个人标志" class="avatar">
+            </div>
+            <ul class="mac-list">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#blog">博客</a></li>
+                <li><a href="#projects">项目</a></li>
+                <li><a href="#about">关于我</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 英雄区域 -->
+        <section id="hero" class="mac-window hero-section">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>你的名字</h1>
+                    <p class="bio">全栈开发者 / 技术分享者 / 终身学习者</p>
+                    <div class="social-links">
+                        <a href="#" class="mac-button">
+                            <img src="images/github.svg" alt="GitHub">
+                            GitHub
+                        </a>
+                        <a href="#" class="mac-button">
+                            <img src="images/twitter.svg" alt="Twitter">
+                            Twitter
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="images/hero-illustration.svg" alt="开发者插图">
+                </div>
+            </div>
+        </section>
+
+        <!-- 精选文章区 -->
+        <section id="featured" class="mac-window">
+            <h2>精选文章</h2>
+            <div class="post-grid">
+                <article class="post-card mac-window">
+                    <img src="images/blog/post-1.jpg" alt="文章配图" class="post-image">
+                    <div class="post-content">
+                        <time>2024-03-21</time>
+                        <h3>如何构建一个现代化的个人网站</h3>
+                        <p>分享我构建个人网站的经验和技术选择...</p>
+                        <div class="post-tags">
+                            <span class="tag">技术</span>
+                            <span class="tag">设计</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="post-card mac-window">
+                    <img src="images/blog/post-2.jpg" alt="文章配图" class="post-image">
+                    <div class="post-content">
+                        <time>2024-03-18</time>
+                        <h3>我的技术学习路线图</h3>
+                        <p>从入门到进阶的完整学习路径...</p>
+                        <div class="post-tags">
+                            <span class="tag">学习</span>
+                            <span class="tag">经验</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- 项目展示区 -->
+        <section id="latest-projects" class="mac-window">
+            <h2>最新项目</h2>
+            <div class="projects-grid">
+                <div class="project-card mac-window">
+                    <img src="images/projects/project-1.jpg" alt="项目截图" class="project-image">
+                    <div class="project-content">
+                        <h3>个人博客系统</h3>
+                        <p>使用 React + Node.js 构建的现代化博客系统</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Node.js</span>
+                        </div>
+                        <a href="#" class="mac-button">查看项目</a>
+                    </div>
+                </div>
+                <div class="project-card mac-window">
+                    <img src="images/projects/project-2.jpg" alt="项目截图" class="project-image">
+                    <div class="project-content">
+                        <h3>在线工具集</h3>
+                        <p>一套实用的在线开发工具合集</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Vue</span>
+                            <span class="tech-tag">TypeScript</span>
+                        </div>
+                        <a href="#" class="mac-button">查看项目</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技术栈展示 -->
+        <section id="skills" class="mac-window">
+            <h2>技术栈</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <img src="images/skills/frontend.svg" alt="前端" class="skill-icon">
+                    <h3>前端开发</h3>
+                    <ul class="mac-list">
+                        <li>
+                            <img src="images/skills/react.svg" alt="React">
+                            React
+                        </li>
+                        <li>
+                            <img src="images/skills/typescript.svg" alt="TypeScript">
+                            TypeScript
+                        </li>
+                    </ul>
+                </div>
+                <!-- 更多技能卡片 -->
+            </div>
+        </section>
+
+        <!-- 订阅区域 -->
+        <section id="newsletter" class="mac-window newsletter-section">
+            <div class="newsletter-content">
+                <img src="images/newsletter.svg" alt="订阅插图" class="newsletter-image">
+                <div class="newsletter-form">
+                    <h2>订阅更新</h2>
+                    <p>订阅我的博客，获取最新文章和项目更新通知</p>
+                    <form>
+                        <input type="email" class="mac-input" placeholder="您的邮箱地址">
+                        <button type="submit" class="mac-button">订阅</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mac-window">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="images/logo.svg" alt="网站标志">
+            </div>
+            <div class="footer-links">
+                <a href="#">GitHub</a>
+                <a href="#">Twitter</a>
+                <a href="#">RSS</a>
+            </div>
+            <p>&copy; 2024 版权所有</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
