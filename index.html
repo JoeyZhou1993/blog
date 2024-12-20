@@ -45,88 +45,20 @@
             </div>
         </section>
 
-        <!-- 精选文章区 -->
-        <section id="featured" class="mac-window">
-            <h2>精选文章</h2>
-            <div class="post-grid">
-                <article class="post-card mac-window">
-                    <img src="images/blog/post-1.jpg" alt="文章配图" class="post-image">
-                    <div class="post-content">
-                        <time>2024-03-21</time>
-                        <h3>如何构建一个现代化的个人网站</h3>
-                        <p>分享我构建个人网站的经验和技术选择...</p>
-                        <div class="post-tags">
-                            <span class="tag">技术</span>
-                            <span class="tag">设计</span>
-                        </div>
-                    </div>
-                </article>
-                <article class="post-card mac-window">
-                    <img src="images/blog/post-2.jpg" alt="文章配图" class="post-image">
-                    <div class="post-content">
-                        <time>2024-03-18</time>
-                        <h3>我的技术学习路线图</h3>
-                        <p>从入门到进阶的完整学习路径...</p>
-                        <div class="post-tags">
-                            <span class="tag">学习</span>
-                            <span class="tag">经验</span>
-                        </div>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <!-- 项目展示区 -->
-        <section id="latest-projects" class="mac-window">
-            <h2>最新项目</h2>
-            <div class="projects-grid">
-                <div class="project-card mac-window">
-                    <img src="images/projects/project-1.jpg" alt="项目截图" class="project-image">
-                    <div class="project-content">
-                        <h3>个人博客系统</h3>
-                        <p>使用 React + Node.js 构建的现代化博客系统</p>
-                        <div class="project-tech">
-                            <span class="tech-tag">React</span>
-                            <span class="tech-tag">Node.js</span>
-                        </div>
-                        <a href="#" class="mac-button">查看项目</a>
-                    </div>
+        <!-- 登录模块 -->
+        <section id="login" class="mac-window">
+            <h2>登录</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" class="mac-input" placeholder="请输入用户名" required>
                 </div>
-                <div class="project-card mac-window">
-                    <img src="images/projects/project-2.jpg" alt="项目截图" class="project-image">
-                    <div class="project-content">
-                        <h3>在线工具集</h3>
-                        <p>一套实用的在线开发工具合集</p>
-                        <div class="project-tech">
-                            <span class="tech-tag">Vue</span>
-                            <span class="tech-tag">TypeScript</span>
-                        </div>
-                        <a href="#" class="mac-button">查看项目</a>
-                    </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" class="mac-input" placeholder="请输入密码" required>
                 </div>
-            </div>
-        </section>
-
-        <!-- 技术栈展示 -->
-        <section id="skills" class="mac-window">
-            <h2>技术栈</h2>
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <img src="images/skills/frontend.svg" alt="前端" class="skill-icon">
-                    <h3>前端开发</h3>
-                    <ul class="mac-list">
-                        <li>
-                            <img src="images/skills/react.svg" alt="React">
-                            React
-                        </li>
-                        <li>
-                            <img src="images/skills/typescript.svg" alt="TypeScript">
-                            TypeScript
-                        </li>
-                    </ul>
-                </div>
-                <!-- 更多技能卡片 -->
-            </div>
+                <button type="submit" class="mac-button">登录</button>
+            </form>
         </section>
 
         <!-- 订阅区域 -->
