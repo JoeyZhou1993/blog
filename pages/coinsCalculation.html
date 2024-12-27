@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>棋牌游戏金币模拟</title>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
+</head>
+<body>
+    <h2>棋牌游戏金币模拟</h2>
+    <form id="gameSettings">
+        <label>开始金币：<input type="number" id="initialGold" value="10000"></label><br>
+        <label>赢类型比例：<input type="number" id="winTypeRatio" value="0.5" step="0.01" max="1" min="0" onchange="updateTotalRatios()"></label><br>
+        <label>输类型比例：<input type="number" id="loseTypeRatio" value="0.5" step="0.01" max="1" min="0" onchange="updateTotalRatios()"></label><br>
+        <label>普通类型比例：<input type="number" id="normalTypeRatio" value="0" step="0.01" max="1" min="0" onchange="updateTotalRatios()"></label><br>
+        <label>赢筹码比例：<input type="number" id="winBetRatio" value="0.1" step="0.01" max="1" min="0"></label><br>
+        <label>普通筹码比例：<input type="number" id="normalBetRatio" value="0.1" step="0.01" max="1" min="0"></label><br>
+        <label>输筹码倍数：<input type="number" id="loseBetMultiplier" value="2" step="1" min="1"></label><br>
+        <label>赢类型赢率：<input type="number" id="winTypeWinRate" value="1" step="0.01" max="1" min="0"></label><br>
+        <label>输类型赢率：<input type="number" id="loseTypeWinRate" value="0" step="0.01" max="1" min="0"></label><br>
+        <label>普通类型赢率：<input type="number" id="normalTypeWinRate" value="0.25" step="0.01" max="1" min="0"></label><br>
+        <label>每局抽水：<input type="number" id="commission" value="0.1" step="0.01" max="1" min="0"></label><br>
+        <label>运行场次：<input type="number" id="rounds" value="150"></label><br>
+        <button type="button" onclick="simulateGame()">模拟</button>
+    </form>
+
+    <div id="main" style="width: 800px;height:400px;"></div>
+
+    <script>
+        var myChart = echarts.init(document.getElementById('main'));
+
+        function updateTotalRatios() {
+            var win = parseFloat(document.getElementById('winTypeRatio').value);
+            var lose = parseFloat(document.getElementById('loseTypeRatio').value);
+            var normal = parseFloat(document.getElementById('normalTypeRatio').value);
+            if (win + lose + normal > 1) {
+                alert("三种类型的比例之和不能超过1");
+                document.getElementById('winTypeRatio').value = 0.5;
+                document.getElementById('loseTypeRatio').value = 0.5;
+                document.getElementById('normalTypeRatio').value = 0;
+            }
+        }
+
+        function simulateGame() {
+            var initialGold = parseInt(document.getElementById('initialGold').value);
+            var winTypeRatio = parseFloat(document.getElementById('winTypeRatio').value);
+            var loseTypeRatio = parseFloat(document.getElementById('loseTypeRatio').value);
+            var normalTypeRatio = parseFloat(document.getElementById('normalTypeRatio').value);
+            var winBetRatio = parseFloat(document.getElementById('winBetRatio').value);
+            var normalBetRatio = parseFloat(document.getElementById('normalBetRatio').value);
+            var loseBetMultiplier = parseInt(document.getElementById('loseBetMultiplier').value);
+            var winTypeWinRate = parseFloat(document.getElementById('winTypeWinRate').value);
+            var loseTypeWinRate = parseFloat(document.getElementById('loseTypeWinRate').value);
+            var normalTypeWinRate = parseFloat(document.getElementById('normalTypeWinRate').value);
+            var commission = parseFloat(document.getElementById('commission').value);
+            var rounds = parseInt(document.getElementById('rounds').value);
+            
+            var playerGold = initialGold;
+            var winBets = []; // 存储过去10局赢的筹码
+            var gameData = [];
+            
+            for (var round = 1; round <= rounds; round++) {
+                var gameType = Math.random();
+                var winBet = Math.abs(Math.floor(playerGold * winBetRatio)); // 赢类型的筹码
+                var normalBet = Math.abs(Math.floor(playerGold * normalBetRatio)); // 普通类型的筹码
+                if (winBets.length >= 10) {
+                    winBets.shift(); // 移除最早的赢筹码记录
+                }
+                winBets.push(winBet); // 添加当前局的筹码到数组
+                var averageWinBet = winBets.reduce((a, b) => a + b, 0) / Math.min(winBets.length, 10); // 计算过去10局赢的筹码均值
+                var loseBet = Math.floor(averageWinBet * loseBetMultiplier); // 输类型的筹码
+                
+                var bet;
+                var isWin;
+                var winAmount;
+
+                //打印轮次
+                console.log("第"+round+"轮");
+
+                if (gameType < winTypeRatio) {
+                    bet = winBet;
+                    isWin = Math.random() < winTypeWinRate;
+                    console.log("Bet"+bet);
+                    console.log("赢类型");
+                } else if (gameType < winTypeRatio + loseTypeRatio) {
+                    bet = loseBet;
+                    isWin = Math.random() < loseTypeWinRate;
+                    console.log("Bet"+bet);
+                    console.log("输类型");
+                } else {
+                    bet = normalBet;
+                    isWin = Math.random() < normalTypeWinRate;
+                    console.log("Bet"+bet);
+                    console.log("普通类型");
+                }
+
+                if (isWin) {
+                    winAmount = Math.floor(bet * 3 * (1 - commission));
+                    playerGold = Math.floor(playerGold + winAmount);
+                    console.log("赢");
+                    console.log("赢"+winAmount);
+                } else {
+                    playerGold = Math.floor(playerGold - bet);
+                    console.log("输");
+                    console.log("输"+bet);
+                }
+
+                gameData.push({round: round, gold: playerGold});
+
+                console.log("当前金币："+playerGold);
+            }
+
+           
+
+            var option = {
+                title: {
+                    text: '玩家金币变化曲线'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: gameData.map(function (item) {
+                        return '第' + item.round + '轮';
+                    })
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value} 金币'
+                    }
+                },
+                series: [{
+                    name: '玩家金币',
+                    type: 'line',
+                    data: gameData.map(function (item) {
+                        return item.gold;
+                    }),
+                    markPoint: {
+                        data: [
+                            {type: 'max', name: '最大值'},
+                            {type: 'min', name: '最小值'}
+                        ]
+                    },
+                    markLine: {
+                        data: [
+                            {type: 'average', name: '平均值'}
+                        ]
+                    }
+                }]
+            };
+
+            myChart.setOption(option);
+        }
+    </script>
+</body>
+</html>

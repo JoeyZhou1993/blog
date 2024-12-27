@@ -58,6 +58,7 @@
                     <input type="password" id="password" class="mac-input" placeholder="请输入密码" required>
                 </div>
                 <button type="submit" class="mac-button">登录</button>
+                <button id="apply">注册</button>
             </form>
         </section>
 
@@ -92,5 +93,11 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+        document.getElementById('apply').addEventListener('click', () => {
+            // 跳转到注册页面
+            window.location.href = 'pages/register.html';
+        });
+    </script>
 </body>
 </html>
