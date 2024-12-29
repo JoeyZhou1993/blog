@@ -10,21 +10,53 @@
     <h2>棋牌游戏金币模拟</h2>
     <form id="gameSettings">
         <label>开始金币：<input type="number" id="initialGold" value="10000"></label><br>
-        <label>赢类型比例：<input type="number" id="winTypeRatio" value="0.5" step="0.01" max="1" min="0" onchange="updateTotalRatios()"></label><br>
-        <label>输类型比例：<input type="number" id="loseTypeRatio" value="0.5" step="0.01" max="1" min="0" onchange="updateTotalRatios()"></label><br>
-        <label>普通类型比例：<input type="number" id="normalTypeRatio" value="0" step="0.01" max="1" min="0" onchange="updateTotalRatios()"></label><br>
+        <label>最小下注：<input type="number" id="minBet" value="1000" min="100"></label><br>
+        <label>赢类型比例：<input type="number" id="winTypeRatio" value="0.4" step="0.01" max="1" min="0" onchange="updateTotalRatios()"></label><br>
+        <label>输类型比例：<input type="number" id="loseTypeRatio" value="0.4" step="0.01" max="1" min="0" onchange="updateTotalRatios()"></label><br>
+        <label>普通类型比例：<input type="number" id="normalTypeRatio" value="0.2" step="0.01" max="1" min="0" onchange="updateTotalRatios()"></label><br>
         <label>赢筹码比例：<input type="number" id="winBetRatio" value="0.1" step="0.01" max="1" min="0"></label><br>
         <label>普通筹码比例：<input type="number" id="normalBetRatio" value="0.1" step="0.01" max="1" min="0"></label><br>
         <label>输筹码倍数：<input type="number" id="loseBetMultiplier" value="2" step="1" min="1"></label><br>
-        <label>赢类型赢率：<input type="number" id="winTypeWinRate" value="1" step="0.01" max="1" min="0"></label><br>
-        <label>输类型赢率：<input type="number" id="loseTypeWinRate" value="0" step="0.01" max="1" min="0"></label><br>
-        <label>普通类型赢率：<input type="number" id="normalTypeWinRate" value="0.25" step="0.01" max="1" min="0"></label><br>
+        <label>赢类型赢率：<input type="number" id="winTypeWinRate" value="0.8" step="0.01" max="1" min="0"></label><br>
+        <label>输类型赢率：<input type="number" id="loseTypeWinRate" value="0.2" step="0.01" max="1" min="0"></label><br>
+        <label>普通类型赢率：<input type="number" id="normalTypeWinRate" value="0.3" step="0.01" max="1" min="0"></label><br>
         <label>每局抽水：<input type="number" id="commission" value="0.1" step="0.01" max="1" min="0"></label><br>
         <label>运行场次：<input type="number" id="rounds" value="150"></label><br>
         <button type="button" onclick="simulateGame()">模拟</button>
+        <button type="button" onclick="simulateMultipleUsers(1000)">模拟1000人</button>
     </form>
 
     <div id="main" style="width: 800px;height:400px;"></div>
+    <div id="statistics" style="margin-top: 20px;">
+        <p>胜率: <span id="winRate">-</span></p>
+        <p>总轮次: <span id="totalRounds">-</span></p>
+        <p>初始金币: <span id="initialGoldDisplay">-</span></p>
+        <p>最终金币: <span id="finalGold">-</span></p>
+        <p>盈亏: <span id="profitLoss">-</span></p>
+        <p>赢局平均下注: <span id="avgWinBet">-</span></p>
+        <p>输局平均下注: <span id="avgLoseBet">-</span></p>
+        <p>最大连赢次数: <span id="maxConsecutiveWins">-</span></p>
+    </div>
+
+    <div id="multipleResults" style="margin-top: 20px; display: none;">
+        <h3>1000人模拟结果</h3>
+        <p>平均胜率: <span id="avgWinRate">-</span></p>
+        <p>平均最终金币: <span id="avgFinalGold">-</span></p>
+        <p>最大金币: <span id="maxGold">-</span></p>
+        <p>平均游戏轮数: <span id="avgRounds">-</span></p>
+        <p>破产率: <span id="bankruptRate">-</span></p>
+        <p>破产用户数: <span id="bankruptUsers">-</span></p>
+        <p>平均赢局下注: <span id="multiAvgWinBet">-</span></p>
+        <p>平均输局下注: <span id="multiAvgLoseBet">-</span></p>
+        <div id="goldRanges">
+            <h4>金币区间分布</h4>
+            <p>1-10000: <span id="range1">-</span></p>
+            <p>10000-100000: <span id="range2">-</span></p>
+            <p>100000-1000000: <span id="range3">-</span></p>
+            <p>1000000-10000000: <span id="range4">-</span></p>
+            <p>10000000以上: <span id="range5">-</span></p>
+        </div>
+    </div>
 
     <script>
         var myChart = echarts.init(document.getElementById('main'));
@@ -41,117 +73,365 @@
             }
         }
 
-        function simulateGame() {
-            var initialGold = parseInt(document.getElementById('initialGold').value);
-            var winTypeRatio = parseFloat(document.getElementById('winTypeRatio').value);
-            var loseTypeRatio = parseFloat(document.getElementById('loseTypeRatio').value);
-            var normalTypeRatio = parseFloat(document.getElementById('normalTypeRatio').value);
-            var winBetRatio = parseFloat(document.getElementById('winBetRatio').value);
-            var normalBetRatio = parseFloat(document.getElementById('normalBetRatio').value);
-            var loseBetMultiplier = parseInt(document.getElementById('loseBetMultiplier').value);
-            var winTypeWinRate = parseFloat(document.getElementById('winTypeWinRate').value);
-            var loseTypeWinRate = parseFloat(document.getElementById('loseTypeWinRate').value);
-            var normalTypeWinRate = parseFloat(document.getElementById('normalTypeWinRate').value);
-            var commission = parseFloat(document.getElementById('commission').value);
-            var rounds = parseInt(document.getElementById('rounds').value);
-            
-            var playerGold = initialGold;
-            var winBets = []; // 存储过去10局赢的筹码
-            var gameData = [];
-            
-            for (var round = 1; round <= rounds; round++) {
-                var gameType = Math.random();
-                var winBet = Math.abs(Math.floor(playerGold * winBetRatio)); // 赢类型的筹码
-                var normalBet = Math.abs(Math.floor(playerGold * normalBetRatio)); // 普通类型的筹码
-                if (winBets.length >= 10) {
-                    winBets.shift(); // 移除最早的赢筹码记录
-                }
-                winBets.push(winBet); // 添加当前局的筹码到数组
-                var averageWinBet = winBets.reduce((a, b) => a + b, 0) / Math.min(winBets.length, 10); // 计算过去10局赢的筹码均值
-                var loseBet = Math.floor(averageWinBet * loseBetMultiplier); // 输类型的筹码
-                
-                var bet;
-                var isWin;
-                var winAmount;
+        // 获取所有游戏参数
+        function getGameParameters() {
+            return {
+                initialGold: parseInt(document.getElementById('initialGold').value),
+                minBet: parseInt(document.getElementById('minBet').value),
+                winTypeRatio: parseFloat(document.getElementById('winTypeRatio').value),
+                loseTypeRatio: parseFloat(document.getElementById('loseTypeRatio').value),
+                normalTypeRatio: parseFloat(document.getElementById('normalTypeRatio').value),
+                winBetRatio: parseFloat(document.getElementById('winBetRatio').value),
+                normalBetRatio: parseFloat(document.getElementById('normalBetRatio').value),
+                loseBetMultiplier: parseFloat(document.getElementById('loseBetMultiplier').value),
+                winTypeWinRate: parseFloat(document.getElementById('winTypeWinRate').value),
+                loseTypeWinRate: parseFloat(document.getElementById('loseTypeWinRate').value),
+                normalTypeWinRate: parseFloat(document.getElementById('normalTypeWinRate').value),
+                commission: parseFloat(document.getElementById('commission').value),
+                rounds: parseInt(document.getElementById('rounds').value)
+            };
+        }
 
-                //打印轮次
-                console.log("第"+round+"轮");
-
-                if (gameType < winTypeRatio) {
-                    bet = winBet;
-                    isWin = Math.random() < winTypeWinRate;
-                    console.log("Bet"+bet);
-                    console.log("赢类型");
-                } else if (gameType < winTypeRatio + loseTypeRatio) {
-                    bet = loseBet;
-                    isWin = Math.random() < loseTypeWinRate;
-                    console.log("Bet"+bet);
-                    console.log("输类型");
+        // 处理游戏类型连续性
+        function handleGameTypeContinuity(gameType, params, counters) {
+            if (gameType < params.winTypeRatio) {
+                if (counters.consecutiveWinType >= 3) {
+                    if (Math.random() < 0.5) {
+                        gameType = params.winTypeRatio + (params.loseTypeRatio / 2);
+                        counters.consecutiveWinType = 0;
+                    } else {
+                        gameType = params.winTypeRatio + params.loseTypeRatio + (params.normalTypeRatio / 2);
+                        counters.consecutiveWinType = 0;
+                    }
                 } else {
-                    bet = normalBet;
-                    isWin = Math.random() < normalTypeWinRate;
-                    console.log("Bet"+bet);
-                    console.log("普通类型");
+                    counters.consecutiveWinType++;
+                    counters.consecutiveLoseType = 0;
                 }
-
-                if (isWin) {
-                    winAmount = Math.floor(bet * 3 * (1 - commission));
-                    playerGold = Math.floor(playerGold + winAmount);
-                    console.log("赢");
-                    console.log("赢"+winAmount);
+            } else if (gameType < params.winTypeRatio + params.loseTypeRatio) {
+                if (counters.consecutiveLoseType >= 3) {
+                    if (Math.random() < 0.5) {
+                        gameType = params.winTypeRatio / 2;
+                        counters.consecutiveLoseType = 0;
+                    } else {
+                        gameType = params.winTypeRatio + loseTypeRatio + (params.normalTypeRatio / 2);
+                        counters.consecutiveLoseType = 0;
+                    }
                 } else {
-                    playerGold = Math.floor(playerGold - bet);
-                    console.log("输");
-                    console.log("输"+bet);
+                    counters.consecutiveLoseType++;
+                    counters.consecutiveWinType = 0;
                 }
-
-                gameData.push({round: round, gold: playerGold});
-
-                console.log("当前金币："+playerGold);
+            } else {
+                counters.consecutiveWinType = 0;
+                counters.consecutiveLoseType = 0;
             }
+            return gameType;
+        }
 
-           
+        // 计算下注金额和判断输赢
+        function calculateBetAndWin(gameType, params, playerGold, winningBets, winBet) {
+            let bet, isWin;
+            
+            if (gameType < params.winTypeRatio) {
+                bet = Math.max(Math.abs(Math.floor(playerGold * params.winBetRatio)), params.minBet);
+                isWin = Math.random() < params.winTypeWinRate;
+            } else if (gameType < params.winTypeRatio + params.loseTypeRatio) {
+                let averageWinningBet = winningBets.length > 0 
+                    ? winningBets.reduce((a, b) => a + b, 0) / winningBets.length 
+                    : winBet;
+                bet = Math.max(Math.floor(averageWinningBet * params.loseBetMultiplier), params.minBet);
+                isWin = Math.random() < params.loseTypeWinRate;
+            } else {
+                bet = Math.max(Math.abs(Math.floor(playerGold * params.normalBetRatio)), params.minBet);
+                isWin = Math.random() < params.normalTypeWinRate;
+            }
+            
+            return { bet, isWin };
+        }
 
-            var option = {
-                title: {
-                    text: '玩家金币变化曲线'
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                xAxis: {
-                    type: 'category',
-                    data: gameData.map(function (item) {
-                        return '第' + item.round + '轮';
-                    })
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: {
-                        formatter: '{value} 金币'
-                    }
-                },
-                series: [{
-                    name: '玩家金币',
-                    type: 'line',
-                    data: gameData.map(function (item) {
-                        return item.gold;
-                    }),
-                    markPoint: {
-                        data: [
-                            {type: 'max', name: '最大值'},
-                            {type: 'min', name: '最小值'}
-                        ]
-                    },
-                    markLine: {
-                        data: [
-                            {type: 'average', name: '平均值'}
-                        ]
-                    }
-                }]
+        // 处理游戏结果
+        function processGameResult(isWin, bet, params, playerGold) {
+            let winAmount = 0;
+            if (isWin) {
+                winAmount = Math.floor(bet * 3 * (1 - params.commission));
+                playerGold = Math.floor(playerGold + winAmount);
+            } else {
+                playerGold = Math.floor(playerGold - bet);
+            }
+            return { playerGold, winAmount };
+        }
+
+        // 合并后的函数，增加showChart参数来控制是否显示图表
+        function simulateSingleUser(showChart = false) {
+            const params = getGameParameters();
+            let playerGold = params.initialGold;
+            let winningBets = [];
+            let totalRounds = 0;
+            let winRounds = 0;
+            let gameData = showChart ? [{round: 0, gold: playerGold}] : null;
+            
+            // 添加连续赢统计
+            let currentConsecutiveWins = 0;
+            let maxConsecutiveWins = 0;
+
+            const counters = {
+                consecutiveWinType: 0,
+                consecutiveLoseType: 0
             };
 
-            myChart.setOption(option);
+            // 添加赢输局的下注统计
+            let winBets = [];
+            let loseBets = [];
+
+            for (let round = 1; round <= params.rounds; round++) {
+                // 检查金币是否足够最小下注
+                if (playerGold < params.minBet) {
+                    if (showChart) {
+                        console.log(`第${round}轮 - 金币不足最小下注 - 当前金币:${playerGold}, 最小下注:${params.minBet}`);
+                    }
+                    break;
+                }
+
+                let gameType = Math.random();
+                gameType = handleGameTypeContinuity(gameType, params, counters);
+
+                let winBet = Math.abs(Math.floor(playerGold * params.winBetRatio));
+                
+                if (winningBets.length >= 10) winningBets.shift();
+                
+                const { bet, isWin } = calculateBetAndWin(gameType, params, playerGold, winningBets, winBet);
+                
+                // 检查金币是否足够本次下注
+                if (playerGold < bet) {
+                    if (showChart) {
+                        console.log(`第${round}轮 - 金币不足本次下注 - 当前金币:${playerGold}, 需要下注:${bet}`);
+                    }
+                    break;
+                }
+
+                // 计算这局的winAmount
+                let winAmount = 0;
+                if (isWin) {
+                    winAmount = Math.floor(bet * 3 * (1 - params.commission));
+                }
+                
+                if (showChart) {
+                    let roundInfo = {
+                        轮次: round,
+                        类型: gameType < params.winTypeRatio ? '赢型' : 
+                             gameType < params.winTypeRatio + params.loseTypeRatio ? '输型' : '普通',
+                        连续赢型: counters.consecutiveWinType,
+                        连续输型: counters.consecutiveLoseType,
+                        下注: bet,
+                        结果: isWin ? '赢' : '输',
+                        当局初始金币: playerGold,  // 在计算结果前的金币数
+                        当局结束金币: isWin ? playerGold + winAmount : playerGold - bet  // 计算后的金币数
+                    };
+                    
+                    if (isWin) {
+                        roundInfo.收益 = winAmount;
+                    } else {
+                        roundInfo.损失 = bet;
+                    }
+                    
+                    console.log('回合信息:', roundInfo);
+                    gameData.push({round: round, gold: playerGold});
+                }
+                
+                const result = processGameResult(isWin, bet, params, playerGold);
+                playerGold = result.playerGold;
+
+                if (isWin) {
+                    winningBets.push(bet);
+                    winRounds++;
+                    winBets.push(bet);
+                    currentConsecutiveWins++;
+                    maxConsecutiveWins = Math.max(maxConsecutiveWins, currentConsecutiveWins);
+                } else {
+                    loseBets.push(bet);
+                    currentConsecutiveWins = 0;
+                }
+                
+                totalRounds++;
+                if (playerGold < 0) break;
+            }
+
+            if (totalRounds === 0) return null;
+
+            // 计算平均下注
+            const avgWinBet = winBets.length > 0 ? 
+                Math.floor(winBets.reduce((a, b) => a + b, 0) / winBets.length) : 0;
+            const avgLoseBet = loseBets.length > 0 ? 
+                Math.floor(loseBets.reduce((a, b) => a + b, 0) / loseBets.length) : 0;
+
+            const result = {
+                winRate: (winRounds / totalRounds * 100),
+                finalGold: playerGold,
+                totalRounds: totalRounds,
+                avgWinBet: avgWinBet,
+                avgLoseBet: avgLoseBet
+            };
+
+            // 如果需要显示图表，更新UI
+            if (showChart) {
+                // 更新统计信息
+                document.getElementById('winRate').textContent = result.winRate.toFixed(2) + '%';
+                document.getElementById('totalRounds').textContent = totalRounds;
+                document.getElementById('initialGoldDisplay').textContent = params.initialGold;
+                document.getElementById('finalGold').textContent = playerGold;
+                document.getElementById('profitLoss').textContent = playerGold - params.initialGold;
+
+                // 更新图表
+                const option = {
+                    title: { text: '玩家金币变化曲线' },
+                    tooltip: { trigger: 'axis' },
+                    xAxis: {
+                        type: 'category',
+                        data: gameData.map(item => item.round === 0 ? '初始' : '第' + item.round + '轮')
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: { formatter: '{value} 金币' }
+                    },
+                    series: [{
+                        name: '玩家金币',
+                        type: 'line',
+                        data: gameData.map(item => item.gold),
+                        connectNulls: true,
+                        showSymbol: true,
+                        markPoint: {
+                            data: [
+                                {type: 'max', name: '最大值'},
+                                {type: 'min', name: '最小值'}
+                            ]
+                        },
+                        markLine: {
+                            data: [{type: 'average', name: '平均值'}]
+                        }
+                    }]
+                };
+                myChart.setOption(option);
+
+                // 添加平均下注显示
+                document.getElementById('avgWinBet').textContent = avgWinBet;
+                document.getElementById('avgLoseBet').textContent = avgLoseBet;
+                document.getElementById('maxConsecutiveWins').textContent = maxConsecutiveWins;
+            }
+
+            return result;
+        }
+
+        // 修改原有的调用函数
+        function simulateGame() {
+            simulateSingleUser(true);
+            // 隐藏1000人模拟结果
+            document.getElementById('multipleResults').style.display = 'none';
+            // 显示单人模拟结果
+            document.getElementById('statistics').style.display = 'block';
+        }
+
+        // 新增模拟多用户函数
+        function simulateMultipleUsers(userCount) {
+            const params = getGameParameters();
+            let totalWinRate = 0;
+            let totalFinalGold = 0;
+            let totalRounds = 0;
+            let validUsers = 0;
+            let bankruptUsers = 0;
+            let maxGold = 0;
+            let totalAvgWinBet = 0;  // 添加总赢局平均下注
+            let totalAvgLoseBet = 0;  // 添加总输局平均下注
+
+            // 定义金币区间统计
+            const goldRanges = {
+                '1-10000': 0,
+                '10000-100000': 0,
+                '100000-1000000': 0,
+                '1000000-10000000': 0,
+                '10000000以上': 0
+            };
+
+            for (let i = 0; i < userCount; i++) {
+                let result = simulateSingleUser();
+                if (result) {
+                    totalWinRate += result.winRate;
+                    totalFinalGold += result.finalGold;
+                    totalRounds += result.totalRounds;
+                    validUsers++;
+                    maxGold = Math.max(maxGold, result.finalGold);
+                    totalAvgWinBet += result.avgWinBet;  // 累加每个用户的平均赢局下注
+                    totalAvgLoseBet += result.avgLoseBet;  // 累加每个用户的平均输局下注
+
+                    // 统计金币区间
+                    if (result.finalGold < params.minBet) {
+                        // 已经在破产统计中
+                    } else if (result.finalGold <= 10000) {
+                        goldRanges['1-10000']++;
+                    } else if (result.finalGold <= 100000) {
+                        goldRanges['10000-100000']++;
+                    } else if (result.finalGold <= 1000000) {
+                        goldRanges['100000-1000000']++;
+                    } else if (result.finalGold <= 10000000) {
+                        goldRanges['1000000-10000000']++;
+                    } else {
+                        goldRanges['10000000以上']++;
+                    }
+
+                    // 破产统计
+                    if (result.totalRounds < params.rounds || result.finalGold < params.minBet) {
+                        bankruptUsers++;
+                    }
+                }
+            }
+
+            let averageWinRate = (totalWinRate / validUsers).toFixed(2);
+            let averageFinalGold = Math.floor(totalFinalGold / validUsers);
+            let averageRounds = Math.floor(totalRounds / validUsers);
+            let bankruptRate = ((bankruptUsers / validUsers) * 100).toFixed(2);
+            let avgWinBet = Math.floor(totalAvgWinBet / validUsers);  // 计算所有用户的平均赢局下注
+            let avgLoseBet = Math.floor(totalAvgLoseBet / validUsers);  // 计算所有用户的平均输局下注
+
+            // 计算各区间比例
+            const rangePercentages = {};
+            for (let range in goldRanges) {
+                rangePercentages[range] = ((goldRanges[range] / validUsers) * 100).toFixed(2) + '%';
+            }
+
+            let stats = {
+                平均胜率: averageWinRate + '%',
+                平均最终金币: averageFinalGold,
+                最大金币: maxGold,
+                平均游戏轮数: averageRounds,
+                破产率: bankruptRate + '%',
+                有效样本数: validUsers,
+                破产用户数: bankruptUsers,
+                平均赢局下注: avgWinBet,
+                平均输局下注: avgLoseBet,
+                金币区间分布: rangePercentages
+            };
+
+            // 更新显示
+            document.getElementById('avgWinRate').textContent = averageWinRate + '%';
+            document.getElementById('avgFinalGold').textContent = averageFinalGold;
+            document.getElementById('maxGold').textContent = maxGold;
+            document.getElementById('avgRounds').textContent = averageRounds;
+            document.getElementById('bankruptRate').textContent = bankruptRate + '%';
+            document.getElementById('bankruptUsers').textContent = bankruptUsers;
+            document.getElementById('multiAvgWinBet').textContent = avgWinBet;  // 显示平均赢局下注
+            document.getElementById('multiAvgLoseBet').textContent = avgLoseBet;  // 显示平均输局下注
+
+            // 更新区间分布
+            document.getElementById('range1').textContent = rangePercentages['1-10000'];
+            document.getElementById('range2').textContent = rangePercentages['10000-100000'];
+            document.getElementById('range3').textContent = rangePercentages['100000-1000000'];
+            document.getElementById('range4').textContent = rangePercentages['1000000-10000000'];
+            document.getElementById('range5').textContent = rangePercentages['10000000以上'];
+
+            // 显示1000人模拟结果，隐藏单人模拟结果
+            document.getElementById('multipleResults').style.display = 'block';
+            document.getElementById('statistics').style.display = 'none';
+
+            // 移除alert，保留console.log用于调试
+            console.log('1000人模拟统计:', stats);
         }
     </script>
 </body>
